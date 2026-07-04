@@ -1,0 +1,62 @@
+# IFS4ICON variable configuration
+# Variable name -> ECMWF parameter index mapping
+
+# DKRZ archive paths
+paths:
+  ml: "/pool/data/ERA5/E5/ml/an/1H"
+  sf: "/pool/data/ERA5/E5/sf/an/1H"
+
+# Model level variables (hourly analysis)
+var_ml:
+  u:        "131"   # U-component of wind
+  v:        "132"   # V-component of wind
+  w:        "135"   # Vertical velocity
+  t:        "130"   # Temperature
+  geop_ml:  "129"   # Geopotential (model level)
+  lnps:     "152"   # Logarithm of surface pressure
+  qv:       "133"   # Specific humidity
+  qc:       "246"   # Specific cloud liquid water content
+  qi:       "247"   # Specific cloud ice water content
+  qr:       "075"   # Specific rain water content
+  qs:       "076"   # Specific snow water content
+
+# Surface level variables (hourly analysis)
+var_sf:
+  sst:      "034"   # Sea surface temperature
+  ci:       "031"   # Sea-ice cover
+  t_snow:   "238"   # Snow temperature
+  w_snow:   "141"   # Snow depth (water equivalent)
+  rho_snow: "033"   # Snow density
+  alb_snow: "032"   # Snow albedo
+  skt:      "235"   # Skin temperature
+  stl1:     "139"   # Soil temperature level 1
+  stl2:     "170"   # Soil temperature level 2
+  stl3:     "183"   # Soil temperature level 3
+  stl4:     "236"   # Soil temperature level 4
+  swvl1:    "039"   # Volumetric soil water layer 1
+  swvl2:    "040"   # Volumetric soil water layer 2
+  swvl3:    "041"   # Volumetric soil water layer 3
+  swvl4:    "042"   # Volumetric soil water layer 4
+  src:      "198"   # Skin reservoir content
+
+# Variables to retrieve from CDS Copernicus
+retrieve_vars:
+  soil_type:      "043"
+  geopotential:   "129"
+  land_sea_mask:  "172"
+
+# Spectral variables that require sp2gpl transform before regridding
+spectral_vars:
+  - u
+  - v
+  - w
+  - t
+  - geop_ml
+  - lnps
+
+# SWVL -> SMI remapping (unused GRIB parameter numbers)
+var_smi:
+  "039": "996"
+  "040": "997"
+  "041": "998"
+  "042": "999"
