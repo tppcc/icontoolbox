@@ -107,7 +107,7 @@ def __cds_request(init_vars, retrieve_vars):
             "product_type": ["reanalysis"],
             "variable": [vname],
             "date": init_vars["init_date"],
-            "time": ["00:00"],
+            "time": ["00:00", "12:00"],
             "data_format": "netcdf",
             "download_format": "unarchived",
             "area": [90, -180, -90, 180],
@@ -257,7 +257,7 @@ def __generate_remap_nml(iconremap_cfg, output_path, init_date, output_grid):
     subprocess.run(
         [
             "bash", "-c",
-            f"module load cdo && cdo -O merge {' '.join(merge_files)} {merged_file}",
+            f"module load cdo && cdo -O seltimestep,1 -merge {' '.join(merge_files)} {merged_file}",
         ],
         check=True,
         capture_output=True,
