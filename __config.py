@@ -20,7 +20,8 @@ def load_default_config(config_yaml=None):
 
     Returns
     -------
-    dict with keys: paths, var_ml, var_sf, retrieve_vars, spectral_vars, var_smi
+    dict with keys: paths, var_ml, var_sf, retrieve_vars, spectral_vars,
+                    var_smi, iconremap
     """
     if config_yaml is not None:
         with open(config_yaml, "r", encoding="utf-8") as f:

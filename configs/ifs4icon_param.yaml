@@ -60,3 +60,72 @@ var_smi:
   "040": "997"
   "041": "998"
   "042": "999"
+
+# --------------------------------------------------------------------------
+# ICON remap configuration (used when remap_nml is auto-generated)
+# --------------------------------------------------------------------------
+# When remap_nml is not supplied to IFS4ICON(), namelists are built from
+# the settings below.
+#
+# file_prefix : filename prefix (E5ml00 for model-level, E5sf00 for surface)
+# file_param  : parameter code in the filename  <prefix>_1H_<date>_<file_param>.nc
+# inputname   : NetCDF variable name produced by CDO -t ecmwf (case-sensitive)
+# outputname  : ICON-expected variable name written by iconremap
+# code        : GRIB parameter code passed to iconremap
+# intp_method : interpolation method  (3 = RBF vector for u/v, RBF scalar otherwise)
+# loptional   : (optional) .TRUE. if the field may be absent in the input
+# --------------------------------------------------------------------------
+iconremap:
+  # Static parameters for the &remap_nml Fortran namelist block.
+  # Runtime paths (in_filename, out_filename, out_grid_filename) are
+  # injected by the code; everything here is written verbatim.
+  remap_nml:
+    in_type: 1                    # 1 = regular / Gaussian lon-lat grid
+    out_type: 2                   # 2 = ICON unstructured triangular grid
+    out_filetype: 5               # 2 = GRIB2, 4 = netCDF, 5 = netCDF-4
+    l_have3dbuffer: false
+    rbf_scale_uv2vec: -1.0        # RBF scale for U,V -> VN; -1 = automatic
+
+  # Every &input_field_nml block for iconremap, in order.
+  # Duplicate (file_prefix, file_param) pairs are de-duplicated for the merge
+  # but kept as separate namelist blocks (e.g. GEOP_SFC and GEOP_ML both
+  # read from the ML z variable).
+  input_fields:
+    # ── model-level (3D) fields ──────────────────────────────────────────
+    - {file_prefix: "E5ml00", file_param: "131", inputname: "u",    outputname: "U",    code: 131, intp_method: 3}
+    - {file_prefix: "E5ml00", file_param: "132", inputname: "v",    outputname: "V",    code: 132, intp_method: 3}
+    - {file_prefix: "E5ml00", file_param: "135", inputname: "w",    outputname: "W",    code: 135, intp_method: 3}
+    - {file_prefix: "E5ml00", file_param: "130", inputname: "t",    outputname: "T",    code: 130, intp_method: 3}
+    - {file_prefix: "E5ml00", file_param: "133", inputname: "q",    outputname: "QV",   code: 133, intp_method: 3}
+    - {file_prefix: "E5ml00", file_param: "246", inputname: "clwc", outputname: "QC",   code: 246, intp_method: 3}
+    - {file_prefix: "E5ml00", file_param: "247", inputname: "ciwc", outputname: "QI",   code: 247, intp_method: 3}
+    - {file_prefix: "E5ml00", file_param: "075", inputname: "crwc", outputname: "QR",   code:  75, intp_method: 3, loptional: true}
+    - {file_prefix: "E5ml00", file_param: "076", inputname: "cswc", outputname: "QS",   code:  76, intp_method: 3, loptional: true}
+    - {file_prefix: "E5ml00", file_param: "152", inputname: "lnsp", outputname: "LNPS", code: 152, intp_method: 3}
+
+    # ── geopotential (surface + model-level from the same 3D field) ──────
+    - {file_prefix: "E5ml00", file_param: "129", inputname: "z", outputname: "GEOP_SFC", code: 129, intp_method: 3}
+    - {file_prefix: "E5ml00", file_param: "129", inputname: "z", outputname: "GEOP_ML",  code: 129, intp_method: 3}
+
+    # ── surface / soil (2D) fields ───────────────────────────────────────
+    - {file_prefix: "E5sf00", file_param: "034", inputname: "SSTK", outputname: "SST",       code:  34, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "031", inputname: "CI",   outputname: "CI",        code:  31, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "235", inputname: "SKT",  outputname: "SKT",       code: 235, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "238", inputname: "TSN",  outputname: "T_SNOW",    code: 238, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "141", inputname: "SD",   outputname: "W_SNOW",    code: 141, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "033", inputname: "RSN",  outputname: "RHO_SNOW",  code:  33, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "032", inputname: "ASN",  outputname: "ALB_SNOW",  code:  32, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "198", inputname: "SRC",  outputname: "W_I",       code: 198, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "172", inputname: "lsm",  outputname: "LSM",       code: 172, intp_method: 3}
+
+    # ── soil temperature levels ──────────────────────────────────────────
+    - {file_prefix: "E5sf00", file_param: "139", inputname: "STL1", outputname: "STL1", code: 139, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "170", inputname: "STL2", outputname: "STL2", code: 170, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "183", inputname: "STL3", outputname: "STL3", code: 183, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "236", inputname: "STL4", outputname: "STL4", code: 236, intp_method: 3}
+
+    # ── soil moisture index (pre-computed from SWVL via SWV2SMI) ─────────
+    - {file_prefix: "E5sf00", file_param: "996", inputname: "smil1", outputname: "SMIL1", code: 39, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "997", inputname: "smil2", outputname: "SMIL2", code: 40, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "998", inputname: "smil3", outputname: "SMIL3", code: 41, intp_method: 3}
+    - {file_prefix: "E5sf00", file_param: "999", inputname: "smil4", outputname: "SMIL4", code: 42, intp_method: 3}
