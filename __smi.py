@@ -227,7 +227,8 @@ def SWV2SMI(ds, slt):
         if coord in ds.coords and ds[coord].attrs:
             ds_smi[coord].attrs.update(ds[coord].attrs)
 
-    return ds_smi"""
+    return ds_smi
+"""
 Convert ERA5 Volumetric Soil Moisture (SWVL1-4) to Soil Moisture Index (SMI)
 using the ERA5/HTESSEL soil type classification (1-7).
  
